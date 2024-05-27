@@ -1,6 +1,6 @@
 function adaptToClient(point) {
     const adaptedPoint = {
-      ...point,
+     ...point,
       basePrice: point['base_price'],
       dateFrom: point['date_from'],
       dateTo: point['date_to'],
@@ -13,11 +13,11 @@ function adaptToClient(point) {
     delete adaptedPoint['is_favorite'];
   
     return adaptedPoint;
-  }
+}
   
-  function adaptToServer(point) {
+function adaptToServer(point) {
     const adaptedPoint = {
-      ...point,
+     ...point,
       ['base_price']: Number(point.basePrice),
       ['date_from']: new Date(point.dateFrom).toISOString(),
       ['date_to']: new Date(point.dateTo).toISOString(),
@@ -30,10 +30,9 @@ function adaptToClient(point) {
     delete adaptedPoint.isFavorite;
   
     return adaptedPoint;
-  }
+}
   
-  export {
+export {
     adaptToClient,
     adaptToServer
-  };
-  
+};
