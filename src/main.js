@@ -1,19 +1,16 @@
-import TripInfoView from './view/trip-info-view.js';
+import TripInfoPresenter from './presenter/trip-info-presenter.js';
 import RoutePresenter from './presenter/route-presenter.js';
-
-import { render, RenderPosition } from './framework/render.js';
+import NewPointButtonPresenter from './presenter/new-point-button-presenter.js';
+import FilterPresenter from './presenter/filter-presenter.js';
 
 import PointsModel from './model/point-model.js';
 import DestinationsModel from './model/destination-model.js';
 import OffersModel from './model/offer-model.js';
 import FilterModel from './model/filter-model.js';
-import NewPointBtnPresenter from './presenter/new-point-button-presenter.js';
-import FilterPresenter from './presenter/filter-presenter.js';
+
+import { AUTHORIZATION, END_POINT } from './const.js';
 
 import PointsApiService from './points-api-service.js';
-
-const AUTHORIZATION = 'Basic spveve93f4hg';
-const END_POINT = 'https://21.objects.htmlacademy.pro/big-trip';
 
 const siteHeaderElement = document.querySelector('.page-header');
 const headerInfoElement = siteHeaderElement.querySelector('.trip-main');
@@ -32,7 +29,7 @@ const pointsModel = new PointsModel({
 
 const filterModel = new FilterModel();
 
-const newPointBtnPresenter = new NewPointBtnPresenter({
+const newPointButtonPresenter = new NewPointButtonPresenter({
   container: headerInfoElement,
 });
 
@@ -48,16 +45,22 @@ const routePresenter = new RoutePresenter({
   destinationsModel,
   offersModel,
   filterModel,
-  newPointBtnPresenter
+  newPointBtnPresenter: newPointButtonPresenter
 });
 
-render(new TripInfoView(), headerInfoElement, RenderPosition.AFTERBEGIN);
+const tripInfoPresenter = new TripInfoPresenter({
+  container: headerInfoElement,
+  pointsModel,
+  destinationsModel,
+  offersModel
+});
 
+tripInfoPresenter.init();
 filterPresenter.init();
 routePresenter.init();
 
 pointsModel.init().finally(() => {
-  newPointBtnPresenter.init({
-    onButtonClick: routePresenter.handleNewPointBtnClick
+  newPointButtonPresenter.init({
+    onButtonClick: routePresenter.handleNewPointButtonClick
   });
 });
