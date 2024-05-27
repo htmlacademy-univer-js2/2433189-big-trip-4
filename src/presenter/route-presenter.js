@@ -1,13 +1,16 @@
 import ListOfRoutePointsView from '../view/list-of-route-points-view.js';
 import SortingView from '../view/sorting-view.js';
-import { render, remove, RenderPosition } from '../framework/render.js';
 import ListEmptyView from '../view/list-empty-view.js';
-import PointPresenter from './point-presenter.js';
-import { FilterType, SortType, UpdateType, UserAction, TimeLimit } from '../const.js';
-import { sortPointsPrice, sortPointsTime, sortPointsday } from '../utils/sort-points.js';
-import { filter } from '../utils/filter.js';
-import NewPointPresenter from './new-point-presenter.js';
 import LoadingView from '../view/loading-view.js';
+
+import PointPresenter from './point-presenter.js';
+import NewPointPresenter from './new-point-presenter.js';
+
+import { render, remove, RenderPosition } from '../framework/render.js';
+import { FilterType, SortType, UpdateType, UserAction, TimeLimit } from '../const.js';
+import { sort } from '../utils/sort-points.js';
+import { filter } from '../utils/filter.js';
+
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 
 export default class RoutePresenter {
@@ -61,16 +64,7 @@ export default class RoutePresenter {
     const filterType = this.#filterModel.get();
     const filteredPoints = filter[filterType](this.#pointsModel.points);
 
-    switch (this.#currentSortType) {
-      case SortType.DAY:
-        return filteredPoints.sort(sortPointsday);
-      case SortType.PRICE:
-        return filteredPoints.sort(sortPointsPrice);
-      case SortType.TIME:
-        return filteredPoints.sort(sortPointsTime);
-    }
-
-    return filteredPoints;
+    return sort[this.#currentSortType](filteredPoints);
   }
 
   init() {
@@ -152,7 +146,7 @@ export default class RoutePresenter {
     this.#uiBlocker.unblock();
   };
 
-  handleNewPointBtnClick = () => {
+  handleNewPointButtonClick = () => {
     this.#isCreating = true;
     this.#currentSortType = SortType.DAY;
     this.#filterModel.set(UpdateType.MAJOR, FilterType.EVERYTHING);
@@ -198,7 +192,8 @@ export default class RoutePresenter {
     });
   }
 
-  #renderLoading = () => {
+  #renderLoading = ({isLoading, isLoadingError}) => {
+    this.#loadingComponent = new LoadingView(isLoading, isLoadingError);
     render(this.#loadingComponent, this.#routeContainer, RenderPosition.AFTERBEGIN);
   };
 
@@ -209,13 +204,17 @@ export default class RoutePresenter {
   }
 
   #renderRoute = () => {
+    const isLoading = this.#isLoading;
+    const isLoadingError = this.#isLoadingError;
+
     if (this.#isLoading) {
-      this.#renderLoading();
+      this.#renderLoading({isLoading, isLoadingError});
       return;
     }
 
     if (this.#isLoadingError) {
       this.#clearRoute({ resetSortType: true });
+      this.#renderLoading({isLoading, isLoadingError});
       return;
     }
 

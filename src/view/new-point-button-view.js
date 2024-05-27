@@ -1,10 +1,10 @@
 import AbstractView from '../framework/view/abstract-view.js';
 
-function createNewPointBtnTemplate() {
+function createNewPointButtonTemplate() {
   return '<button class="trip-main__event-add-btn btn btn--big btn--yellow" type="button">New event</button>';
 }
 
-export default class NewPointBtnView extends AbstractView {
+export default class NewPointButtonView extends AbstractView {
   #handleClick = null;
 
   constructor({ onClick }) {
@@ -14,7 +14,7 @@ export default class NewPointBtnView extends AbstractView {
   }
 
   get template() {
-    return createNewPointBtnTemplate();
+    return createNewPointButtonTemplate();
   }
 
   setDisabled = (isDisabled) => {
