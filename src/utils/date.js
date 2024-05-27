@@ -30,12 +30,8 @@ function getTimeDifference(dateFrom, dateTo) {
   }
 }
 
-// console.log(getTimeDifference(new Date(2023, 11, 4, 10, 0), new Date(2023, 11, 6, 13, 20)));
-
-function getRandomDate(date = new Date(0)) {
+function getRandomDate(date = new Date()) {
   return dayjs(date).add(getRandomInteger(30, 1500), 'minute');
 }
-
-// console.log(getRandomDate().format('YYYY MMMM DD[D] HH[H] mm[M]'));
 
 export { formatPointDate, formatPointTime, getTimeDifference, getRandomDate, formatEditDate };
